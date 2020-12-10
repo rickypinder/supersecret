@@ -213,7 +213,8 @@ func connectToEngine(client *rpc.Client, pAddr string, engineAddr string) {
 }
 
 func main() {
-	pAddr := flag.String("ip", "127.0.0.1:8050", "IP and port to listen on")
+	port := flag.String("port", "8050", "Port to listen on")
+	pAddr := flag.String("ip", "127.0.0.1", "IP to listen on")
 	engineAddr := flag.String("engine", "127.0.0.1:8030", "Address of the logic engine")
 	threads := flag.Int("threads", 4, "number of threads to use for computation")
 	flag.Parse()
@@ -225,7 +226,7 @@ func main() {
 	worker.spawnWorkerThreads()
 
 	rpc.Register(&worker)
-	listener, err := net.Listen("tcp", *pAddr)
+	listener, err := net.Listen("tcp", ":"+*port)
 	if err != nil {
 		panic(err)
 	}
@@ -234,7 +235,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	go connectToEngine(client, *pAddr, *engineAddr)
+	go connectToEngine(client, *pAddr+":"+*port, *engineAddr)
 	go rpc.Accept(listener)
 	<- shutdownChannel
 }
