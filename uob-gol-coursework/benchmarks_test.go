@@ -3,9 +3,10 @@ package main
 import (
 	"testing"
 	"uk.ac.bris.cs/gameoflife/gol"
+	"fmt"
 )
 
-func Benchmark16( b *testing.B) {
+/*func Benchmark16( b *testing.B) {
 	benchmarkGol(b, makeParam(1000, 16))
 }
 
@@ -23,6 +24,9 @@ func Benchmark256( b *testing.B) {
 
 func Benchmark512( b *testing.B) {
 	benchmarkGol(b, makeParam(1000, 512))
+}*/
+func Benchmark5120(b *testing.B) {
+	benchmarkGol(b, makeParam(100, 5120))
 }
 
 func makeParam(turns, size int) gol.Params {
@@ -31,13 +35,16 @@ func makeParam(turns, size int) gol.Params {
 
 
 func benchmarkGol(b *testing.B, p gol.Params) {
+	fmt.Println(b.N)
 	for n := 0; n < b.N; n++ {
 		events := make(chan gol.Event)
+		fmt.Println("AAAAAA")
 		gol.Run(p, events, nil)
 		for event := range events {
 			switch event.(type) {
 			case gol.FinalTurnComplete:
 				//it finishes
+				return
 			}
 		}
 	}
